@@ -1,0 +1,132 @@
+set(SCENARIOENGINE_INCLUDE_DIRS ${SCENARIOENGINE_INCLUDE_DIRS} CACHE INTERNAL "")
+set(ROADMANAGER_INCLUDE_DIR ${ROADMANAGER_INCLUDE_DIR} CACHE INTERNAL "")
+set(VIEWER_BASE_INCLUDE_DIR ${VIEWER_BASE_INCLUDE_DIR} CACHE INTERNAL "")
+set(PLAYER_BASE_INCLUDE_DIR ${PLAYER_BASE_INCLUDE_DIR} CACHE INTERNAL "")
+set(CONTROLLERS_INCLUDE_DIR ${CONTROLLERS_INCLUDE_DIR} CACHE INTERNAL "")
+set(OSG_INCLUDE_DIR ${OSG_INCLUDE_DIR} CACHE INTERNAL "")
+set(SUMO_INCLUDE_DIR ${SUMO_INCLUDE_DIR} CACHE INTERNAL "")
+set(COMMON_MINI_INCLUDE_DIR ${COMMON_MINI_INCLUDE_DIR} CACHE INTERNAL "")
+set(OSI_INCLUDE_DIR ${OSI_INCLUDE_DIR} CACHE INTERNAL "")
+set(PUGIXML_INCLUDE_DIR ${PUGIXML_INCLUDE_DIR} CACHE INTERNAL "")
+set(EXPR_INCLUDE_DIR ${EXPR_INCLUDE_DIR} CACHE INTERNAL "")
+set(TIME_LIB ${TIME_LIB} CACHE INTERNAL "")
+set(OSG_PACKAGE_URL ${OSG_PACKAGE_URL} CACHE INTERNAL "")
+set(OSG_DIR ${OSG_DIR} CACHE INTERNAL "")
+set(OSI_PACKAGE_URL ${OSI_PACKAGE_URL} CACHE INTERNAL "")
+set(OSI_DIR ${OSI_DIR} CACHE INTERNAL "")
+set(SUMO_PACKAGE_URL ${SUMO_PACKAGE_URL} CACHE INTERNAL "")
+set(SUMO_DIR ${SUMO_DIR} CACHE INTERNAL "")
+set(GTEST_PACKAGE_URL ${GTEST_PACKAGE_URL} CACHE INTERNAL "")
+set(GTEST_DIR ${GTEST_DIR} CACHE INTERNAL "")
+set(SOCK_LIB ${SOCK_LIB} CACHE INTERNAL "")
+set(sumo_libs ${sumo_libs} CACHE INTERNAL "")
+set(esminiRMLib ${esminiRMLib} CACHE INTERNAL "")
+set(esminiLib ${esminiLib} CACHE INTERNAL "")
+set(osi_libs ${osi_libs} CACHE INTERNAL "")
+set(viewer_libs ${viewer_libs} CACHE INTERNAL "")
+
+
+
+
+
+
+cmake_minimum_required(VERSION 3.1)
+project (pyesmini)
+
+#FetchContent_Declare(
+#  esmini
+#  GIT_REPOSITORY    https://github.com/esmini/esmini.git
+#  GIT_TAG           0d4ff1ea0662f09aefc41382c8003e4617d48a6c
+#)
+#FetchContent_MakeAvailable(esmini)
+
+message(STATUS "HEREYYYYYYYYYYYYY")
+set(esmini_SOURCE_DIR esmini)
+add_subdirectory(${esmini_SOURCE_DIR})
+#include(${esmini_SOURCE_DIR})
+
+
+
+set(CMAKE_BUILD_TYPE "Release") # https://github.com/microsoft/vcpkg/issues/20237?amp=1
+
+message(STATUS "SCENARIOENGINE_INCLUDE_DIRS ${SCENARIOENGINE_INCLUDE_DIRS}")
+message(STATUS "ROADMANAGER_INCLUDE_DIR ${ROADMANAGER_INCLUDE_DIR}")
+message(STATUS "VIEWER_BASE_INCLUDE_DIR ${VIEWER_BASE_INCLUDE_DIR}")
+message(STATUS "PLAYER_BASE_INCLUDE_DIR ${PLAYER_BASE_INCLUDE_DIR}")
+message(STATUS "CONTROLLERS_INCLUDE_DIR ${CONTROLLERS_INCLUDE_DIR}")
+message(STATUS "OSG_INCLUDE_DIR ${OSG_INCLUDE_DIR}")
+message(STATUS "SUMO_INCLUDE_DIR ${SUMO_INCLUDE_DIR}")
+message(STATUS "COMMON_MINI_INCLUDE_DIR ${COMMON_MINI_INCLUDE_DIR}")
+message(STATUS "PUGIXML_INCLUDE_DIR ${PUGIXML_INCLUDE_DIR}")
+
+
+add_subdirectory(pybind11)
+pybind11_add_module(pyplayerbase src/playerbase/pyplayerbase.cpp)
+include_directories(
+  ${SCENARIOENGINE_INCLUDE_DIRS}
+  ${ROADMANAGER_INCLUDE_DIR}
+  ${VIEWER_BASE_INCLUDE_DIR}
+  ${PLAYER_BASE_INCLUDE_DIR}
+  ${CONTROLLERS_INCLUDE_DIR}
+  ${OSG_INCLUDE_DIR}
+  ${SUMO_INCLUDE_DIR}
+  ${COMMON_MINI_INCLUDE_DIR}
+  ${OSI_INCLUDE_DIR}
+  ${PUGIXML_INCLUDE_DIR}
+)
+
+target_link_libraries(pyplayerbase PRIVATE
+    ViewerBase ${OSG_LIBRARIES}
+    ${SUMO_LIBRARIES}
+    ${OSI_LIBRARIES}
+    PlayerBase
+    ScenarioEngine
+    Controllers
+    RoadManager
+    CommonMini
+    ${viewer_libs}
+    ${osi_libs}
+    ${sumo_libs}
+    ${TIME_LIB}
+    ${SOCK_LIB}
+)
+target_compile_definitions(pyplayerbase PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
+
+
+pybind11_add_module(pyroadmanager MODULE
+    src/roadmanager/pyroadmanager.cpp
+    # Libraries/esminiLib/esminiLib.hpp
+    # Modules/RoadManager/odrSpiral.cpp
+    # Modules/CommonMini/CommonMini.cpp
+    # Modules/CommonMini/buildnr.cpp
+    # Modules/CommonMini/version.cpp
+    # ../externals/pugixml/pugixml.cpp
+    )
+include_directories(
+    ${PLAYER_BASE_INCLUDE_DIR}
+    ${SCENARIOENGINE_INCLUDE_DIRS}
+    # Libraries/esminiLib/
+    ${OSI_INCLUDE_DIR}
+    ${OSG_INCLUDE_DIR}
+    ${COMMON_MINI_INCLUDE_DIR}
+    ${ROADMANAGER_INCLUDE_DIR}
+    ${CONTROLLERS_INCLUDE_DIR}
+    ${VIEWER_BASE_INCLUDE_DIR}
+    )
+target_link_libraries(pyroadmanager PRIVATE
+    ViewerBase ${OSG_LIBRARIES}
+    ${SUMO_LIBRARIES}
+    ${OSI_LIBRARIES}
+    PlayerBase
+    ScenarioEngine
+    Controllers
+    RoadManager
+    CommonMini
+    ${viewer_libs}
+    ${osi_libs}
+    ${sumo_libs}
+    ${TIME_LIB}
+    ${SOCK_LIB}
+    )
+target_compile_definitions(pyroadmanager PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
+
