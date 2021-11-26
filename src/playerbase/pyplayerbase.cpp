@@ -15,7 +15,7 @@
 #include <fstream>
 #include "playerbase.hpp"
 #include "IdealSensor.hpp"
-#include "OSIReporter.hpp"
+//#include "OSIReporter.hpp"
 #include "ScenarioEngine.hpp"
 #include "RoadManager.hpp"
 #include "CommonMini.hpp"

@@ -8,12 +8,11 @@ project (pyesmini)
 #)
 #FetchContent_MakeAvailable(esmini)
 
-message(STATUS "HEREYYYYYYYYYYYYY")
+add_subdirectory(pybind11)
+
 set(esmini_SOURCE_DIR esmini)
 add_subdirectory(${esmini_SOURCE_DIR})
 #include(${esmini_SOURCE_DIR})
-
-
 
 set(CMAKE_BUILD_TYPE "Release") # https://github.com/microsoft/vcpkg/issues/20237?amp=1
 
@@ -26,9 +25,9 @@ message(STATUS "OSG_INCLUDE_DIR ${OSG_INCLUDE_DIR}")
 message(STATUS "SUMO_INCLUDE_DIR ${SUMO_INCLUDE_DIR}")
 message(STATUS "COMMON_MINI_INCLUDE_DIR ${COMMON_MINI_INCLUDE_DIR}")
 message(STATUS "PUGIXML_INCLUDE_DIR ${PUGIXML_INCLUDE_DIR}")
+message(STATUS "OSI_INCLUDE_DIR ${OSI_INCLUDE_DIR}")
 
 
-add_subdirectory(pybind11)
 pybind11_add_module(pyplayerbase src/playerbase/pyplayerbase.cpp)
 include_directories(
   ${SCENARIOENGINE_INCLUDE_DIRS}
@@ -41,21 +40,5 @@ include_directories(
   ${COMMON_MINI_INCLUDE_DIR}
   ${OSI_INCLUDE_DIR}
   ${PUGIXML_INCLUDE_DIR}
-)
 
-target_link_libraries(pyplayerbase PRIVATE
-    ViewerBase ${OSG_LIBRARIES}
-    ${SUMO_LIBRARIES}
-    ${OSI_LIBRARIES}
-    PlayerBase
-    ScenarioEngine
-    Controllers
-    RoadManager
-    CommonMini
-    ${viewer_libs}
-    ${osi_libs}
-    ${sumo_libs}
-    ${TIME_LIB}
-    ${SOCK_LIB}
 )
-target_compile_definitions(pyplayerbase PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
